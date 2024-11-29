@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나 잡아봐라~~</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+            background-color: black;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+        }
+        #moving-image {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            cursor: pointer;
+            z-index: 10;
+            transition: transform 0.2s;
+            user-select: none;  /* 텍스트 선택 방지 */
+            -webkit-user-select: none;  /* Safari용 */
+            -webkit-user-drag: none;  /* 드래그 방지 */
+            -webkit-touch-callout: none;  /* iOS Safari용 */
+            -moz-user-select: none;  /* Firefox용 */
+            -ms-user-select: none;  /* IE/Edge용 */
+        }
+        #moving-image.disabled {
+            pointer-events: none;  /* 클릭 비활성화 */
+            cursor: default;
+        }
+        #moving-image:hover {
+            transform: scale(1.1);
+        }
+        #background-text {
+            position: absolute;
+            font-size: 8rem;
+            color: rgba(255, 0, 0, 0.5);
+            z-index: 1;
+            text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.8);
+            animation: pulse 1s infinite;
+            user-select: none;
+        }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+        .message-box {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid red;
+            display: none;
+            z-index: 100;
+            text-align: center;
+            min-width: 200px;
+        }
+        .close-btn {
+            margin-top: 10px;
+            padding: 5px 15px;
+            background: red;
+            border: none;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .close-btn:hover {
+            background: darkred;
+        }
+        #score {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: red;
+            z-index: 100;
+        }
+        body {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="score">❤️러브러브게이지❤️: <span id="score-value">0</span></div>
+    <div id="background-text">CLICK ME</div>
+    <img src="https://i.ibb.co/DVkycnV/looploop.png" id="moving-image" alt="Click me!">
+    <div class="message-box" id="message-box">
+        <p id="message-text"></p>
+        <button class="close-btn" onclick="hideMessage()"></button>
+    </div>
+    
+    <script>
+        const image = document.getElementById('moving-image');
+        const messageBox = document.getElementById('message-box');
+        const messageText = document.getElementById('message-text');
+        const scoreValue = document.getElementById('score-value');
+        const closeBtn = document.querySelector('.close-btn');
+        let clickCount = 0;
+        let score = 0;
+        let isMessageVisible = false;
+        
+        const messages = [
+            "오오...서진, 나의 서신을 받았군요..",
+            "나를 만나러 와준 건가요?",
+            "하하하~나의 스킨, 나 잡아봐라",
+            "나의 작은 종달새...훗후",
+            "ㅇ..이제 그만.."
+        ];
+
+        const buttonTexts = [
+            "네, 그래요.",
+            "정말 보고 싶었어요.",
+            "이런 말썽꾸러기~",
+            "당신의 작은 종달새라... 그럼 당신은 제 하늘이 되어주실 건가요?",
+            "평생. 함 께.해요."
+        ];
+
+        function moveImage() {
+            if (!isMessageVisible) {
+                const maxX = window.innerWidth - image.offsetWidth;
+                const maxY = window.innerHeight - image.offsetHeight;
+                const newX = Math.random() * maxX;
+                const newY = Math.random() * maxY;
+                
+                image.style.left = `${Math.min(Math.max(0, newX), maxX)}px`;
+                image.style.top = `${Math.min(Math.max(0, newY), maxY)}px`;
+            }
+        }
+
+        function showMessage() {
+            if (!isMessageVisible) {
+                clickCount++;
+                score += 20;
+                scoreValue.textContent = score;
+                const messageIndex = Math.min(clickCount - 1, messages.length - 1);
+                messageText.textContent = messages[messageIndex];
+                closeBtn.textContent = buttonTexts[messageIndex]; // 버튼 텍스트 변경
+                messageBox.style.display = 'block';
+                isMessageVisible = true;
+                image.classList.add('disabled');
+            }
+        }
+
+        function hideMessage() {
+            messageBox.style.display = 'none';
+            isMessageVisible = false;
+            image.classList.remove('disabled');  // 이미지 클릭 다시 활성화
+        }
+
+        setInterval(moveImage, 150);
+        image.addEventListener('click', showMessage);
+        moveImage();
+    </script>
+</body>
+</html>
